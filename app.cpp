@@ -236,3 +236,126 @@ class StudentManager{
     }
 };
 
+void clearInputBuffer() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+string getValidatedLine(const string& prompt) {
+    string val;
+    while (true) {
+        cout << prompt;
+        getline(cin, val);
+        if (!val.empty()) return val;
+        cout << "Field cannot be empty. Try again.\n";
+    }
+}
+
+int getValidatedInt(const string& prompt, int minVal, int maxVal) {
+    int val;
+    while (true) {
+        cout << prompt;
+        if (cin >> val && val >= minVal && val <= maxVal) {
+            clearInputBuffer();
+            return val;
+        }
+        cout << "Invalid input. Enter an integer between " << minVal << " and " << maxVal << ".\n";
+        clearInputBuffer();
+    }
+}
+
+float getValidatedFloat(const string& prompt, float minVal, float maxVal) {
+    float val;
+    while (true) {
+        cout << prompt;
+        if (cin >> val && val >= minVal && val <= maxVal) {
+            clearInputBuffer();
+            return val;
+        }
+        cout << "Invalid input. Enter a value between " << minVal << " and " << maxVal << ".\n";
+        clearInputBuffer();
+    }
+}
+
+int main() {
+    StudentManager manager;
+    int choice = 0;
+
+    while (choice != 6) {
+        cout << "\n====================================\n"
+                  << "  STUDENT RECORD MANAGEMENT SYSTEM  \n"
+                  << "====================================\n"
+                  << "1. Add Student Record\n"
+                  << "2. View All Student Records\n"
+                  << "3. Search Student by Roll Number\n"
+                  << "4. Update Student Record\n"
+                  << "5. Delete Student Record\n"
+                  << "6. Exit\n"
+                  << "------------------------------------\n";
+
+        choice = getValidatedInt("Enter choice (1-6): ", 1, 6);
+
+        switch (choice) {
+            case 1: {
+                cout << "\n--- Add New Student ---\n";
+                string roll = getValidatedLine("Enter Roll Number: ");
+                string name = getValidatedLine("Enter Full Name: ");
+                string branch = getValidatedLine("Enter Branch (e.g., CSE): ");
+                string sem = getValidatedLine("Enter Semester (I-VIII): ");
+                float gpa = getValidatedFloat("Enter CGPA (0.0 - 10.0): ", 0.0f, 10.0f);
+                string email= getValidatedLine("Enter Email: ");
+                string phone= getValidatedLine("Enter your Phone Number: ");
+
+                if (manager.addStudent(Student(roll, name, branch, sem, gpa, email,phone))) {
+                    cout << "Record added and saved successfully.\n";
+                } else {
+                    std::cout << "Error: A student with Roll Number '" << roll << "' already exists.\n";
+                }
+                break;
+            }
+            case 2:
+                manager.displayall();
+                break;
+
+            case 3: {
+                std::string roll = getValidatedLine("\nEnter Roll Number to search: ");
+                if (!manager.searchStudent(roll)) {
+                    std::cout << "No record found with Roll Number: " << roll << "\n";
+                }
+                break;
+            }
+            case 4: {
+                std::string roll = getValidatedLine("\nEnter Roll Number to update: ");
+                if (!manager.searchStudent(roll)) {
+                    std::cout << "No record found with Roll Number: " << roll << "\n";
+                    break;
+                }
+                cout << "Enter Updated Details:\n";
+                string name = getValidatedLine("Enter New Full Name: ");
+                string branch = getValidatedLine("Enter New Branch: ");
+                string sem = getValidatedLine("Enter New Semester (I-VIII): ");
+                float gpa = getValidatedFloat("Enter New CGPA (0.0 - 10.0): ", 0.0f, 10.0f);
+                string email=getValidatedLine("Enter New Wmail: ");
+                string phone=getValidatedLine("Enter New Phone number: ");
+                if (manager.updateStudent(roll, name, branch, sem, gpa,email,phone)) {
+                    cout << "Record updated successfully.\n";
+                }
+                break;
+            }
+            case 5: {
+                string roll = getValidatedLine("\nEnter Roll Number to delete: ");
+                if (manager.deleteStudent(roll)) {
+                    cout << "Record deleted successfully.\n";
+                } else {
+                    cout << "No record found with Roll Number: " << roll << "\n";
+                }
+                break;
+            }
+            case 6:
+                cout << "Exiting system. All data saved.\n";
+                break;
+        }
+    }
+
+    return 0;
+}
