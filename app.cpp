@@ -130,4 +130,109 @@ class StudentManager{
     ~StudentManager(){
         saveToFile();
     }
-}
+
+    bool addStudent(const Student& student){
+        if(findindexbyenroll(student.getEnrollnumber())!=-1){
+            return false;
+        }
+        students.push_back(student);
+        saveToFile();
+        return true;
+    }
+
+    void displayall()const{
+        if(students.empty()){
+            cout<<"\n No Records found.\n";
+            return;
+        }
+       cout << "\n" << string(110, '-') << "\n";
+        cout << left 
+                  << setw(12) << "Roll Number"
+                  << setw(18) << "Name"
+                  << setw(15) << "Branch"
+                  << setw(10) << "Semester"
+                  << setw(8)  << "CGPA" 
+                  << setw(18) <<"Email"
+                  << setw(13) <<"Phone Number"<<"\n";
+        cout << string(110, '-') << "\n";
+
+         for (const auto& s : students) {
+            cout << left 
+                      << setw(12) << s.getEnrollnumber()
+                      << setw(18) << s.getName()
+                      << setw(15) << s.getBranch()
+                      << setw(10) << s.getSemester()
+                      << fixed << setprecision(2) << setw(8) << s.getCGPA()
+                      << setw(18) << s.getEmail()
+                      << setw(13) << s.getPhone() <<"\n";
+        }
+        cout << string(110, '-') << "\n";
+    }
+
+    bool searchStudent(const string& enrollNumber) const {
+        int idx = findindexbyenroll(enrollNumber);
+        if (idx == -1) return false;
+
+        const auto& s = students[idx];
+        cout << "\n---------- Student Record Found ----------"
+                  << "\nRoll Number : " << s.getEnrollnumber()
+                  << "\nName        : " << s.getName()
+                  << "\nBranch      : " << s.getBranch()
+                  << "\nSemester    : " << s.getSemester()
+                  << "\nCGPA        : " << fixed << setprecision(2) << s.getCGPA()
+                  << "\n--------------------------------------\n";
+        return true;
+    }
+
+    bool updateStudent(const string& rollNumber, const string& newName, 
+                       const string& newBranch, const string& newSem, float newGpa,
+                       const string& newemail, const string& newphone) {
+        int idx = findindexbyenroll(rollNumber);
+        if (idx == -1) return false;
+
+        students[idx].setName(newName);
+        students[idx].setBranch(newBranch);
+        students[idx].setSemester(newSem);
+        students[idx].setCGPA(newGpa);
+        students[idx].setEmail(newemail);
+        students[idx].setPhone(newphone);
+        saveToFile();
+        return true;
+    }
+
+    bool deleteStudent(const std::string& rollNumber) {
+        int idx = findindexbyenroll(rollNumber);
+        if (idx == -1) return false;
+
+        students.erase(students.begin() + idx);
+        saveToFile();
+        return true;
+    }
+
+     void saveToFile() const {
+        ofstream outFile(filename);
+        if (!outFile) {
+            cerr << "Error opening file for writing: " << filename << "\n";
+            return;
+        }
+        for (const auto& s : students) {
+            outFile << s.toCSV() << "\n";
+        }
+    }
+
+    void loadFromFile() {
+        students.clear();
+        ifstream inFile(filename);
+        if (!inFile) return; // File does not exist yet
+
+        string line;
+        while (getline(inFile, line)) {
+            if (line.empty()) continue;
+            Student s;
+            if (Student::fromCSV(line, s)) {
+                students.push_back(s);
+            }
+        }
+    }
+};
+
