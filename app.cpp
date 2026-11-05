@@ -107,4 +107,27 @@ class Student{
          }
          return false;
     }
+};
+class StudentManager{
+    private:
+    vector<Student> students;
+    const string filename="students.csv";
+
+    int findindexbyenroll(const string& enrollnumber)const{
+        for(size_t i=0;i<students.size();++i){
+            if(students[i].getEnrollnumber()==enrollnumber){
+                return static_cast <int>(i);
+            }
+        }
+        return -1;
+    }
+
+    public:
+    StudentManager(){
+        loadFromFile();
+    }
+
+    ~StudentManager(){
+        saveToFile();
+    }
 }
