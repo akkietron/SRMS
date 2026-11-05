@@ -1,20 +1,3 @@
-# Compiled binaries
 *.exe
-*.out
-*.app
-
-# Compiled object files
-*.o
-*.obj
-
-# Debug files
-*.pdb
-*.ilk
-
-# Visual Studio / IDE caches (if applicable)
-.vs/
-.vscode/
-build/
-bin/
-gg.cpp
 trash.cpp
+students.csv
