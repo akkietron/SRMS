@@ -1,44 +1,46 @@
-# Student Record Management System (C++)
+# Student Record Management System
 
-A modular, console-based Student Record Management System written in standard C++. The project uses Object-Oriented Programming (OOP) principles to encapsulate student academic and personal profiles, supporting structured data manipulation and lightweight CSV serialization for persistent storage.
-
----
-
-## Features Implemented
-
-- **OOP Encapsulation**: Private data members for academic and personal attributes with strictly validated public getters and setters.
-- **Data Validation**:
-  - GPA / CGPA bound checking ($0.0 \le \text{CGPA} \le 10.0$).
-  - String field non-empty checks for names, branches, and contact info.
-- **CSV Serialization & Parsing**:
-  - `toCSV()`: Encodes object state into comma-separated text strings.
-  - `fromCSV()`: Parses delimited CSV records with built-in stringstream processing and `try-catch` exception handling for robust type conversions (`stof`).
-- **Flexible Constructors**:
-  - Unparameterized default constructor using modern in-class member initialization to avoid garbage values.
-  - Parameterized constructor utilizing member initializer lists for optimal memory and execution performance.
+A high-performance, modular console application implemented in modern C++ (C++17). Designed around core Object-Oriented Programming (OOP) principles, this system manages student academic records, profile details, and persistence via flat-file CSV storage.
 
 ---
 
-## Data Model
+## Key Features
 
-Each `Student` entity tracks the following fields:
+- **Object-Oriented Architecture**: Full encapsulation of student entities with private attributes, safe constructors, and strict access controls via public getters/setters.
+- **Defensive Data Validation**:
+  - Boundary checking on academic metrics ($0.0 \le \text{CGPA} \le 10.0$).
+  - Guard clauses against empty strings on profile updates.
+- **Robust CSV Persistence**:
+  - Native serialization (`toCSV`) and deserialization (`fromCSV`).
+  - Stream parsing using `std::stringstream` with exception handling (`try-catch` over `std::stof`) to prevent crashes from malformed data lines.
+- **Full CRUD Workflow**:
+  - **Create**: Add new student profiles with duplicate enrollment ID prevention.
+  - **Read**: Formatted tabular display of all enrolled students and single-record queries.
+  - **Update**: Modify personal details, branch, semester, and academic standing in place.
+  - **Delete**: Purge records by unique enrollment key.
+- **Fail-Safe Terminal I/O**: Custom stream sanitizers (`std::cin.clear()`, `std::cin.ignore()`) that eliminate buffer residue and prevent infinite loops on invalid input types.
 
-| Field | Type | Description |
+---
+
+## Data Schema
+
+| Field | Type | Constraint / Description |
 | :--- | :--- | :--- |
-| `enrollnumber` | `string` | Unique student enrollment / registration ID |
-| `name` | `string` | Full name of the student |
-| `branch` | `string` | Academic discipline/department (e.g., CSE) |
-| `semester` | `string` | Current semester designation |
-| `cgpa` | `float` | Cumulative Grade Point Average (0.0 to 10.0 scale) |
-| `email` | `string` | Contact email address |
-| `phonenumber` | `string` | Contact phone number |
+| `enrollnumber` | `std::string` | Primary key / Unique registration identifier |
+| `name` | `std::string` | Full student name |
+| `branch` | `std::string` | Department / Academic discipline (e.g., CSE) |
+| `semester` | `std::string` | Current term / semester designation |
+| `cgpa` | `float` | Scale from `0.00` to `10.00` |
+| `email` | `std::string` | Student institutional/contact email |
+| `phonenumber` | `std::string` | Primary contact number |
 
 ---
 
-## Project Structure
+## Project Architecture
 
 ```text
-├── Student.h          # Core Student entity class definition (or main.cpp)
-├── students.csv       # Persistent flat-file storage (generated at runtime)
-├── .gitignore         # Ignores compiled binaries and temporary artifacts
-└── README.md          # Project documentation
+StudentRecordManagement/
+├── main.cpp          # Complete system implementation (Entity, Manager, CLI)
+├── students.csv      # Persistent flat-file storage database (auto-managed)
+├── .gitignore        # Excludes compiled binaries (*.exe) and IDE artifacts
+└── README.md         # Technical documentation
